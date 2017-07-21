@@ -1,0 +1,202 @@
+
+<uib-accordion close-others="true">
+  <uib-accordion-group is-disabled="true">
+    <uib-accordion-heading>
+      <div class="row">
+        <div class="col-lg-1">Changelist</div>
+        <div class="col-lg-1">Owner</div>
+        <div class="col-lg-2">Time Started</div>
+        <div class="col-lg-2">Build</div>
+        <div class="col-lg-2">Unit Test</div>
+        <div class="col-lg-2">Functional Test</div>
+        <div class="col-lg-1">Status</div>
+      </div>
+    </uib-accordion-heading>
+
+  </uib-accordion-group>
+
+  <uib-accordion-group ng-repeat="dataSet in projectProgress"  class="{{getaccodrdianclass(dataSet.overallstatus)}}" >
+    <uib-accordion-heading >
+      <div class="row">
+        <div class="col-lg-1" ng-bind="dataSet.changeList"></div>
+        <div class="col-lg-1" ng-bind="dataSet.owner">Naresh</div>
+        <div class="col-lg-2" ng-bind="dataSet.timeStarted"></div>
+
+        <div class="col-lg-5">
+          <div class="progress margin-bottom-none status-progress">
+            <uib-progressbar class="progress-striped" value="dataSet.overallProgress"   type="{{returnProgressType(dataSet.overallstatus)}}"></uib-progressbar>
+          </div>
+
+
+              <div class=" display-progress-icon "
+                   ng-class="{'pending-background': dataSet.overallstatus === 0 && dataSet.build.status !== -1,
+                              'running-background': dataSet.overallstatus === 1 && dataSet.build.status !== -1,
+                              'passed-background': dataSet.overallstatus === 2  && dataSet.build.status !== -1,
+                              'failed-background': dataSet.overallstatus === 3 && dataSet.build.status !== -1
+                              }">
+                <i class="glyphicon  image-white top4"
+                     ng-class="{'glyphicon-minus-sign': dataSet.build.status === 0,
+                               'glyphicon-ok': dataSet.build.status === 2,
+                               'glyphicon-exclamation-sign': dataSet.build.status === 3,
+                               'glyphicon-refresh':dataSet.build.status === 1
+                                }"></i>
+              </div>
+          <div class="display-progress-icon image-order-status-intransit"
+               ng-class="{'pending-background': dataSet.overallstatus === 0 && dataSet.unitTesting.status !== -1,
+                              'running-background': dataSet.overallstatus === 1 && dataSet.unitTesting.status !== -1,
+                              'passed-background': dataSet.overallstatus === 2 && dataSet.unitTesting.status !== -1,
+                              'failed-background': (dataSet.overallstatus === 3 && dataSet.unitTesting.status !== -1),
+                              'empty-background' : dataSet.unitTesting.status === -1
+                              }">
+            <i class="glyphicon  image-white top4"
+                 ng-class="{'glyphicon-minus-sign': dataSet.unitTesting.status === 0,
+                               'glyphicon-ok': dataSet.unitTesting.status === 2,
+                               'glyphicon-exclamation-sign': dataSet.unitTesting.status === 3,
+                               'glyphicon-refresh':dataSet.unitTesting.status === 1
+                                }"></i>
+            </div>
+              <div class="image-order-status-completed display-progress-icon"
+                   ng-class="{'pending-background': dataSet.overallstatus === 0 && dataSet.functionalTesting.status !== -1,
+                              'running-background': dataSet.overallstatus === 1 && dataSet.functionalTesting.status !== -1,
+                              'passed-background': dataSet.overallstatus === 2 && dataSet.functionalTesting.status !== -1 ,
+                              'failed-background': dataSet.overallstatus === 3 && dataSet.functionalTesting.status !== -1,
+                              'empty-background' : dataSet.functionalTesting.status === -1
+                              }">
+                <i class="glyphicon   image-white top4"
+                     ng-class="{'glyphicon-minus-sign': dataSet.functionalTesting.status === 0,
+                               'glyphicon-ok': dataSet.functionalTesting.status === 2,
+                               'glyphicon-exclamation-sign': dataSet.functionalTesting.status === 3,
+                               'glyphicon-refresh':dataSet.functionalTesting.status === 1
+                                }"></i>
+              </div>
+
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="col-lg-2 status-text-warning"
+             ng-class="{'status-text-pending': dataSet.overallstatus === 0,
+                               'status-text-passed': dataSet.overallstatus === 2,
+                               'status-text-failed': dataSet.overallstatus === 3,
+                               'status-text-running':dataSet.overallstatus === 1
+                                }">
+          <i class="glyphicon"  ng-class="{'glyphicon-minus-sign': dataSet.overallstatus === 0,
+                               'glyphicon-ok': dataSet.overallstatus === 2,
+                               'glyphicon-exclamation-sign': dataSet.overallstatus === 3,
+                               'glyphicon-refresh':dataSet.overallstatus === 1
+                                }"></i>{{dataSet.overallstatusdesc}}</div>
+      </div>
+    </uib-accordion-heading>
+    <div class="col-lg-2" style="font-size: 12px;padding-left: 0px;color: #777777">
+
+      <div class="col-lg-5" style="">
+        Build
+        <i class="glyphicon  top4"
+           ng-class="{'status-text-pending glyphicon-minus-sign': dataSet.build.status === 0,
+                              'status-text-running glyphicon-refresh':  dataSet.build.status === 1,
+                              'status-text-passed glyphicon-ok': dataSet.build.status === 2,
+                              'status-text-failed glyphicon-exclamation-sign':  dataSet.build.status === 3
+                                }"></i>
+
+        {{dataSet.build.time}}
+      </div>
+      <div class="col-lg-3 paddingleft0">
+        <img ng-if="dataSet.build.debug.status === 0" src="images/Folder-ok.png"/>
+        <img ng-if="dataSet.build.debug.status === 1" src="images/Folder-failed.png"/>
+        <a ng-if="dataSet.build.debug.status === 0"><u>Debug</u></a>
+        <span ng-if="dataSet.build.debug.status === 1"><u>Debug</u></span>
+        <a ng-if="dataSet.build.debug.status === 1"><u><li class="glyphicon glyphicon-download-alt"></li>getlogs</u></a>
+      </div>
+      <div class="col-lg-2 paddingleft0">
+        <img ng-if="dataSet.build.release.status === 0" src="images/Folder-ok.png"/>
+        <img ng-if="dataSet.build.release.status === 1" src="images/Folder-failed.png"/>
+        <a ng-if="dataSet.build.release.status === 0"><u>Release</u></a>
+        <span ng-if="dataSet.build.release.status === 1"><u>Release</u></span>
+        <a ng-if="dataSet.build.release.status === 1"><u><li class="glyphicon glyphicon-download-alt"></li>getlogs</u></a>
+
+      </div>
+      <div class="col-lg-2"><i style="
+    font-size: 20px;
+    color: #777777;
+    padding-top: 15px;
+" class="glyphicon  glyphicon-menu-right"></i></div>
+    </div>
+    <div class="col-lg-4" style="font-size: 12px;padding-left: 0px;">
+
+      <div class="col-lg-3" style="color: #777777">
+        Unit Test       <i class="glyphicon  top4"
+                           ng-class="{'status-text-pending glyphicon-minus-sign': dataSet.unitTesting.status === 0,
+                              'status-text-running glyphicon-refresh':  dataSet.unitTesting.status === 1,
+                              'status-text-passed glyphicon-ok': dataSet.unitTesting.status === 2,
+                              'status-text-failed glyphicon-exclamation-sign':  dataSet.unitTesting.status === 3
+                                }"></i>
+
+        <span  ng-class="{'status-text-pending': dataSet.unitTesting.status === 0,
+                              'status-text-running':  dataSet.unitTesting.status === 1,
+                              'status-text-passed': dataSet.unitTesting.status === 2,
+                              'status-text-failed':  dataSet.unitTesting.status === 3
+                                }" style="font-size: 25px;">{{dataSet.unitTesting.progress.total}}%</span>
+      </div>
+      <div class="col-lg-7 paddingleft0">
+       <div ng-if="dataSet.unitTesting.status === -1" style="font-size: 15px ">Status : <span style="font-size: 25px" class="status-text-failed">Can't Run </span></div>
+        <div class="status-pie-chart" ng-if="dataSet.unitTesting.status !== -1" style="width: 118px; height: 67px;" >
+          <canvas  class="chart chart-pie"
+                  options="{
+        tooltipTemplate: '<%= value %>  ',
+        responsive: true
+    }"   chart-legend="true" responsive="true" chart-colours=["#3BB998","#f0ad4e","#d9534f"]  chart-data="dataSet.unitTesting.progress.demoniation" chart-labels="labels">
+          </canvas>
+
+        </div>
+    </div>
+      <div class="col-lg-2"><i style="
+    font-size: 20px;
+    color: #777777;
+    padding-top: 15px;
+" class="glyphicon  glyphicon-menu-right"></i></div>
+      </div>
+
+    <div class="col-lg-4" style="font-size: 12px;padding-left: 0px;">
+
+      <div class="col-lg-3" style="color: #777777">
+        Functional Test       <i class="glyphicon  top4"
+                           ng-class="{'status-text-pending glyphicon-minus-sign': dataSet.functionalTesting.status === 0,
+                              'status-text-running glyphicon-refresh':  dataSet.functionalTesting.status === 1,
+                              'status-text-passed glyphicon-ok': dataSet.functionalTesting.status === 2,
+                              'status-text-failed glyphicon-exclamation-sign':  dataSet.functionalTesting.status === 3
+                                }"></i>
+
+        <span  ng-class="{'status-text-pending': dataSet.functionalTesting.status === 0,
+                              'status-text-running':  dataSet.functionalTesting.status === 1,
+                              'status-text-passed': dataSet.functionalTesting.status === 2,
+                              'status-text-failed':  dataSet.functionalTesting.status === 3
+                                }" style="font-size: 25px;">{{dataSet.functionalTesting.progress.total}}%</span>
+      </div>
+      <div class="col-lg-7 paddingleft0">
+        <div ng-if="dataSet.functionalTesting.status === -1" style="font-size: 15px ">Status : <span style="font-size: 25px" class="status-text-failed">Can't Run </span></div>
+
+        <div ng-if="dataSet.functionalTesting.status !== -1" class="status-pie-chart" style="width: 118px; height: 67px;" >
+          <canvas class="chart chart-pie"
+                  options="{
+        tooltipTemplate: '<%= value %>  ',
+        responsive: true
+    }"   chart-legend="true"  responsive="true" chart-colours=["#3BB998","#f0ad4e","#d9534f"]  chart-data="dataSet.functionalTesting.progress.demoniation" chart-labels="labels">
+          </canvas>
+        </div>
+      </div>
+      <div class="col-lg-2"><i style="
+    font-size: 20px;
+    color: #777777;
+    padding-top: 15px;
+" class="glyphicon  glyphicon-menu-right"></i></div>
+    </div>
+  <div class="col-lg-2">
+    <div style="font-size: 25px" class="well well-lg">
+      <i class="glyphicon" ng-class="{'status-text-pending glyphicon-minus-sign': dataSet.overallstatus === 0,
+                              'status-text-running glyphicon-refresh':  dataSet.overallstatus === 1,
+                              'status-text-passed glyphicon-ok': dataSet.overallstatus === 2,
+                              'status-text-failed glyphicon-exclamation-sign':  dataSet.overallstatus === 3
+                                }">{{dataSet.overallstatusdesc}}</i>
+    </div>
+  </div>
+  </uib-accordion-group>
+</uib-accordion>
+
